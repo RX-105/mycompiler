@@ -2,6 +2,7 @@ package io.n0sense.mycompiler.parser;
 
 import io.n0sense.mycompiler.objects.SyntaxFragment;
 import io.n0sense.mycompiler.util.SyntaxUtil;
+import org.apache.commons.io.FileUtils;
 
 import static io.n0sense.mycompiler.constant.ErrorConstants.*;
 
@@ -21,7 +22,9 @@ public class SyntaxAnalyzer {
     }
 
     public void process() throws IOException {
-        File sourceFile = new File(inFileName);
+        File origin = new File(inFileName);
+        File sourceFile = File.createTempFile("source", ".c");
+        FileUtils.copyFile(origin, sourceFile);
         // 对文件中的括号进行匹配
         if (!SyntaxUtil.isBracketMatched(sourceFile)) {
             raiseError(bracketMismatched.formatted(inFileName), -2);
@@ -64,12 +67,12 @@ public class SyntaxAnalyzer {
                 else
                     raiseError(invalidNumber.formatted(fragment), -1);
             } else {
-                if (SyntaxUtil.isIdentifier(fragment))
-                    fragments.add(new SyntaxFragment(2, fragment));
-                else if (SyntaxUtil.isOperator(fragment))
+                if (SyntaxUtil.isOperator(fragment))
                     fragments.add(new SyntaxFragment(4, fragment));
                 else if (SyntaxUtil.isSeparator(fragment))
                     fragments.add(new SyntaxFragment(5, fragment));
+                else if (SyntaxUtil.isIdentifier(fragment))
+                    fragments.add(new SyntaxFragment(2, fragment));
                 else
                     raiseError(invalidIdentifier.formatted(fragment), -1);
             }
