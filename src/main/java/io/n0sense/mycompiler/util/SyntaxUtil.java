@@ -14,7 +14,8 @@ public class SyntaxUtil {
             "while");
     public static List<String> operator = List.of("+", "-", "*", "/", "=", "<", ">", "<=", ">=",
             "!=");
-    public static List<String> separator = List.of(",", ";", "{", "}", "{}", "(", ")", "()");
+    public static List<String> separator = List.of(",", ";", "{", "}", "{}", "(", ")", "()", "[",
+            "]", "[]", "\"");
 
     public static boolean isKeyword(String s) {
         return keywords.contains(s);
@@ -122,7 +123,7 @@ public class SyntaxUtil {
                         newLine.append(line.charAt(i));
                     } else if (line.charAt(i) == '/' && !withinString) {
                         // 下一个字符可能是注释符号，需要进行判断。字符串内的不处理
-                        if (line.charAt(i-1) == '*') {
+                        if (i!= 0 && line.charAt(i-1) == '*') {
                             // 判断多行注释的结束。关闭withinComment的标志位
                             withinComment = false;
                         } else if (i == line.length()-1) {
