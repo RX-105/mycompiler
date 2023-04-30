@@ -22,12 +22,12 @@ public class SyntaxAnalyzer {
 
     public void process() throws IOException {
         File sourceFile = new File(inFileName);
-        // 清空输出文件的内容（创建一个FileWriter，但不向其写入任何内容就flush然后close，其内容就会被清空）
-//        new FileWriter(outFileName, false).close();
         // 对文件中的括号进行匹配
-        if (!SyntaxUtil.isBracketMatched(inFileName)) {
+        if (!SyntaxUtil.isBracketMatched(sourceFile)) {
             raiseError(bracketMismatched.formatted(inFileName), -2);
         }
+        // 移除文件中的注释
+        SyntaxUtil.removeComments(sourceFile);
         try (BufferedReader rd = new BufferedReader(new FileReader(sourceFile))) {
             String line = rd.readLine();
             while (line != null) {
