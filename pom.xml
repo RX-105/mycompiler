@@ -83,7 +83,12 @@
                     <mainClass>io.n0sense.mycompiler.Main</mainClass>
                     <imageName>mycompiler</imageName>
                     <buildArgs>
-                        <buildArg>--verbose</buildArg>
+                        <buildArg>
+                            --verbose
+                            -H:IncludeResources=application.properties
+                            -H:IncludeResourceBundles=bundle
+                            -H:+IncludeAllLocales
+                        </buildArg>
                     </buildArgs>
                 </configuration>
             </plugin>
