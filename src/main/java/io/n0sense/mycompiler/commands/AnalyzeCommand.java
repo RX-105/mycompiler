@@ -49,15 +49,7 @@ public class AnalyzeCommand extends AbstractCommand{
 
     @Override
     public void showHelp() {
-        String helpText = """
-                Analyze code from give file, and output analyze result.
-                Command line switches:
-                 -i <source file> : The source file to compile.
-                 -o <out file>    : The out file to write result.
-                                           
-                For example:
-                 mycompiler analyze -i main.c -o main.o
-                """;
+        String helpText = bundle.getString("analyze_help");
         System.out.println(helpText);
     }
 
