@@ -1,6 +1,7 @@
 package io.n0sense.mycompiler.parser;
 
 import io.n0sense.mycompiler.objects.SyntaxFragment;
+import io.n0sense.mycompiler.parser.automaton.DFA;
 import io.n0sense.mycompiler.util.SyntaxUtil;
 import org.apache.commons.io.FileUtils;
 
@@ -15,6 +16,7 @@ public class SyntaxAnalyzer {
     String outFileName;
     int bufferMax = 5000;
     List<SyntaxFragment> fragmentBuffer = new ArrayList<>(bufferMax);
+    DFA c;
 
     public SyntaxAnalyzer(String inFileName, String outFileName) {
         this.inFileName = inFileName;
