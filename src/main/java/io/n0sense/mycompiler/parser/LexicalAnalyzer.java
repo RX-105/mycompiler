@@ -1,10 +1,12 @@
 package io.n0sense.mycompiler.parser;
 
+import io.n0sense.mycompiler.exception.SyntaxError;
 import io.n0sense.mycompiler.objects.LexicalFragment;
 import io.n0sense.mycompiler.parser.automaton.DFA;
 import io.n0sense.mycompiler.parser.automaton.RegexDFA;
 import io.n0sense.mycompiler.util.LexicalUtil;
 import org.apache.commons.io.FileUtils;
+import org.fusesource.jansi.Ansi;
 
 import static io.n0sense.mycompiler.constant.ErrorConstants.*;
 
@@ -30,17 +32,17 @@ public class LexicalAnalyzer {
         HashSet<String> setOfStates = new HashSet<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g"));
         ArrayList<String[]> transition = new ArrayList<>();
         // c语言标识符。可以以字母和下划线开头
-        transition.add(new String[] { "a", "[A-Za-z_]", "b" });
-        transition.add(new String[] { "b", "[A-Za-z0-9_]", "b" });
+        transition.add(new String[]{"a", "[A-Za-z_]", "b"});
+        transition.add(new String[]{"b", "[A-Za-z0-9_]", "b"});
         // 数字
-        transition.add(new String[] {"a", "[0-9]", "c"});
-        transition.add(new String[] {"b", "[0-9]", "c"});
+        transition.add(new String[]{"a", "[0-9]", "c"});
+        transition.add(new String[]{"c", "[0-9]", "c"});
         // 运算符号
-        transition.add(new String[] {"a", "[-+*/]", "d"});
-        transition.add(new String[] {"a", "[!<>=]", "e"});
-        transition.add(new String[] {"e", "[=]", "f"});
+        transition.add(new String[]{"a", "[-+*/]", "d"});
+        transition.add(new String[]{"a", "[!<>=]", "e"});
+        transition.add(new String[]{"e", "[=]", "f"});
         // 分隔符
-        transition.add(new String[] {"a", "[,;{}()]", "g"});
+        transition.add(new String[]{"a", "[,;{}()\\[\\]\\\"]", "g"});
         c = new RegexDFA(setOfStates, startState, acceptStates, transition);
     }
 
@@ -55,29 +57,37 @@ public class LexicalAnalyzer {
         // 移除文件中的注释
         LexicalUtil.removeComments(sourceFile);
         try (BufferedReader rd = new BufferedReader(new FileReader(sourceFile))) {
+            int lineCount = 1;
             String line = rd.readLine();
             while (line != null) {
                 // 不处理没有内容的行
                 if (line.trim().length() != 0) {
-                    List<LexicalFragment> fragments =
-                            analyzeSyntaxFragments(LexicalUtil.split(line).split(" "));
+                    List<LexicalFragment> fragments = analyzeSyntaxFragments(line, lineCount);
                     fragmentBuffer.addAll(fragments);
                     // 当缓冲区元素大于bufferMax时，一次性写入文件，并清空缓冲区
                     if (fragmentBuffer.size() > bufferMax)
                         writeToFile();
                 }
                 line = rd.readLine();
+                lineCount++;
             }
             // 读取完毕后再次写入文件
             writeToFile();
+        } catch (SyntaxError e) {
+            new File(outFileName).deleteOnExit();
+            System.err.println(Ansi.ansi().fgRed().a(e.getMessage()).reset());
         }
     }
 
-    private List<LexicalFragment> analyzeSyntaxFragments(String[] parts) {
+    private List<LexicalFragment> analyzeSyntaxFragments(String line, int lineCount) throws SyntaxError {
         List<LexicalFragment> fragments = new ArrayList<>();
+        String[] parts = LexicalUtil.split(line).split(" ");
+        int col = 0;
         for (String fragment : parts) {
             if (fragment.length() == 0)
                 continue;
+            if (!c.test(fragment))
+                throw new SyntaxError(lineCount, col - 1, fragment, line);
             // 判断顺序：保留关键字->标点符号->数字和标识符
             if (LexicalUtil.isKeyword(fragment)) {
                 fragments.add(new LexicalFragment(1, fragment));
@@ -99,6 +109,7 @@ public class LexicalAnalyzer {
                 else
                     raiseError(invalidIdentifier.formatted(fragment), -1);
             }
+            col += (fragment.length() + 1);
         }
         return fragments;
     }
