@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class SyntaxFragment {
+public class LexicalFragment {
     public Integer identity;
     public String content;
 }

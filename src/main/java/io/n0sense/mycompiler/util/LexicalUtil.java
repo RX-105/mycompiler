@@ -6,7 +6,7 @@ import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 
-public class SyntaxUtil {
+public class LexicalUtil {
     public static List<String> keywords = List.of("auto", "break", "case", "char", "const",
             "continue", "default", "do", "double", "else", "enum", "extern", "float", "for",
             "goto", "if", "int", "long", "register", "return", "short", "signed", "sizeof",

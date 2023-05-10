@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-public class SyntaxUtilTest {
+public class LexicalUtilTest {
     @Test
     void testBracketMatcher() {
         File testFile = new File("C:\\Users\\kazuha\\projects\\java-projects\\mycompiler\\source.c");
-        boolean result = SyntaxUtil.isBracketMatched(testFile);
+        boolean result = LexicalUtil.isBracketMatched(testFile);
         System.out.println("result = " + result);
         Assertions.assertTrue(result);
     }
@@ -18,14 +18,14 @@ public class SyntaxUtilTest {
     void testSplit() {
         String line1 = "int main()";
         String line2 = "int main(int argv, char* argc)";
-        System.out.println(SyntaxUtil.split(line1));
-        System.out.println(SyntaxUtil.split(line2));
+        System.out.println(LexicalUtil.split(line1));
+        System.out.println(LexicalUtil.split(line2));
     }
 
     @Test
     void testRemoveComments() {
         File testFile = new File("C:\\Users\\kazuha\\projects\\java-projects\\mycompiler\\source.c");
-        boolean res = SyntaxUtil.removeComments(testFile);
+        boolean res = LexicalUtil.removeComments(testFile);
         Assertions.assertTrue(res);
     }
 }

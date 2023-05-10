@@ -1,6 +1,6 @@
 package io.n0sense.mycompiler.commands;
 
-import io.n0sense.mycompiler.parser.SyntaxAnalyzer;
+import io.n0sense.mycompiler.parser.LexicalAnalyzer;
 import org.fusesource.jansi.Ansi;
 
 import java.io.File;
@@ -41,7 +41,7 @@ public class AnalyzeCommand extends AbstractCommand{
         }
         checkFile();
         try {
-            new SyntaxAnalyzer(inFileName, outFileName).process();
+            new LexicalAnalyzer(inFileName, outFileName).process();
         } catch (IOException e) {
             e.printStackTrace();
         }
