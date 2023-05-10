@@ -34,5 +34,10 @@ public class TestDFA {
         DFA myDFA = new RegexDFA(setOfStates, startState, acceptStates, transition);
         Assertions.assertTrue(myDFA.test(input1));
         Assertions.assertFalse(myDFA.test(input2));
+
+        String[] tests = new String[]{"int", "main", "(", "int", "a", ",", "char", "*", "*", "argc"};
+        for(String s : tests) {
+            Assertions.assertTrue(myDFA.test(s));
+        }
     }
 }
