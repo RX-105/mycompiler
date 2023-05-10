@@ -60,7 +60,18 @@ public class AnalyzeCommand extends AbstractCommand{
             System.exit(-1);
         }
         file = new File(outFileName);
-        if (!file.canWrite()) {
+        try {
+            if (!file.exists()) {
+                if (!file.createNewFile()) {
+                    System.err.println(error + cantWriteFile.formatted(outFileName));
+                    System.exit(-1);
+                }
+                else if (!file.canWrite()) {
+                    System.err.println(error + cantWriteFile.formatted(outFileName));
+                    System.exit(-1);
+                }
+            }
+        } catch (IOException e) {
             System.err.println(error + cantWriteFile.formatted(outFileName));
             System.exit(-1);
         }
